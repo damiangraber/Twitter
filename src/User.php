@@ -56,7 +56,17 @@ class User {
                 return FALSE;
         }
         else {
-            
+            $query = "UPDATE Users
+                      SET name = '$this->name', 
+                      email = '$this->email',
+                      hashed_password = '$this->hashedPassword'
+                      WHERE id = $this->id";
+
+            if ($connection->query($query)) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -89,12 +99,49 @@ class User {
                 $user->setName($row['name']);
                 $user->setEmail($row['email']);
                 $user->hashedPassword = $row['hashed_password'];
-                
+
                 $users[] = $user;
-                
             }
         }
         return $users;
+    }
+
+    public function delete(mysqli $connection) {
+        if ($this->id != -1) {
+            $query = "DELETE FROM Users WHERE id = $this->id";
+            if ($connection->query($query)) {
+                $this->id = -1;
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+
+    static public function loadUserByEmail(mysqli $connection, $email) {
+        $query = "SELECT * FROM Users WHERE email = '" . $connection->real_escape_string($email) . "'";
+
+        $res = $connection->query($query);
+        if ($res && $res->num_rows == 1) {
+            $row = $res->fetch_assoc();
+            $user = new User();
+            $user->id = $row['id'];
+            $user->setName($row['name']);
+            $user->setEmail($row['email']);
+            $user->hashedPassword = $row['hashed_password'];
+            return $user;
+        }
+        return NULL;
+    }
+
+    static public function login(mysqli $connection, $email, $password) {
+        $user = self::loadUserByEmail($connection, $email);
+        if ($user && password_verify($password, $user->hashedPassword)) {
+            return $user;
+        } else {
+            return FALSE;
+        }
     }
 
 }

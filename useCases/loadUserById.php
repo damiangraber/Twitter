@@ -11,4 +11,7 @@ $user2 = User::loadUserById($conn, 342);
 var_dump($user2);
 
 
+$conn->close();
+$conn = NULL;
+
 ?>
