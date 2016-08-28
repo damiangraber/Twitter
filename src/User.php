@@ -60,6 +60,43 @@ class User {
         }
     }
 
+    static public function loadUserById(mysqli $connection, $id) {
+        $query = "SELECT * FROM Users WHERE id = " . $connection->real_escape_string($id);
+
+        $res = $connection->query($query);
+        if ($res && $res->num_rows == 1) {
+            $row = $res->fetch_assoc(); //pobranie wynikow zapytania do zmiennej
+            $user = new User();
+            $user->id = $row['id'];
+            $user->setName($row['name']);
+            $user->setEmail($row['email']);
+            $user->hashedPassword = $row['hashed_password'];
+
+            return $user;
+        }
+        return NULL;
+    }
+
+    static public function loadAllUsers(mysqli $connection) {
+        $query = "SELECT * FROM Users";
+
+        $users = [];
+        $res = $connection->query($query);
+        if ($res) {
+            foreach ($res as $row) {
+                $user = new User();
+                $user->id = $row['id'];
+                $user->setName($row['name']);
+                $user->setEmail($row['email']);
+                $user->hashedPassword = $row['hashed_password'];
+                
+                $users[] = $user;
+                
+            }
+        }
+        return $users;
+    }
+
 }
 
 ?>
