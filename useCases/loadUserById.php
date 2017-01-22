@@ -3,7 +3,7 @@
 require_once '../src/User.php';
 require_once '../connection.php';
 
-$User = User::loadUserById($conn, 1);
+$User = User::loadUserById($conn, 2);
 var_dump($User);
 
 

@@ -38,6 +38,10 @@ class User {
         return $this->email;
     }
 
+    public function getPassword() {
+        return $this->hashedPassword;
+    }
+
     public function setPassword($password) {
         if (is_string($password) && strlen(trim($password)) > 5) {
             $this->hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -51,14 +55,13 @@ class User {
 
             if ($connection->query($query)) {
                 $this->id = $connection->insert_id;
-                return TRUE;
+                return true;
             } else
-                return FALSE;
+                return false;
         }
         else {
             $query = "UPDATE Users
-                      SET name = '$this->name', 
-                      email = '$this->email',
+                      SET name = '$this->name',                   
                       hashed_password = '$this->hashedPassword'
                       WHERE id = $this->id";
 
@@ -84,7 +87,7 @@ class User {
 
             return $user;
         }
-        return NULL;
+        return null;
     }
 
     static public function loadAllUsers(mysqli $connection) {
@@ -106,19 +109,6 @@ class User {
         return $users;
     }
 
-    public function delete(mysqli $connection) {
-        if ($this->id != -1) {
-            $query = "DELETE FROM Users WHERE id = $this->id";
-            if ($connection->query($query)) {
-                $this->id = -1;
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-        return TRUE;
-    }
-
     static public function loadUserByEmail(mysqli $connection, $email) {
         $query = "SELECT * FROM Users WHERE email = '" . $connection->real_escape_string($email) . "'";
 
@@ -132,7 +122,7 @@ class User {
             $user->hashedPassword = $row['hashed_password'];
             return $user;
         }
-        return NULL;
+        return null;
     }
 
     static public function login(mysqli $connection, $email, $password) {
@@ -140,8 +130,21 @@ class User {
         if ($user && password_verify($password, $user->hashedPassword)) {
             return $user;
         } else {
-            return FALSE;
+            return false;
         }
+    }
+
+    public function delete(mysqli $connection) {
+        if ($this->id != -1) {
+            $query = "DELETE FROM Users WHERE id = $this->id";
+            if ($connection->query($query)) {
+                $this->id = -1;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

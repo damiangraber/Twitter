@@ -1,0 +1,27 @@
+.menu{
+    border: solid 2px black;
+    border-radius: 5px;
+}
+
+.topMenu{
+    display: inline-block;
+}
+
+.banner{
+    background-color: #2aabd2;
+}
+
+.mytext {
+    resize:both;
+}
+
+.tweetSize {
+    width: 300px;
+    height: 50px;
+    background-color: #1f6377;
+}
+
+.accountTweets {
+    font-size: 1000%;
+}
+
